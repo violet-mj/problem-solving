@@ -5,11 +5,19 @@ output = sys.stdout.write
 
 def solve():
     n = int(input())
-    result = n ** 0.5
-    result = ceil(result)
 
-    print(result)
+    l = -1
+    r = 2 ** 32
 
+    while l + 1 < r:
+        mid = (l + r) // 2
+
+        if mid ** 2 >= n:
+            r = mid
+        else:
+            l = mid
+
+    return r
 
 if __name__ == "__main__":
-    solve()
+    print(solve())
