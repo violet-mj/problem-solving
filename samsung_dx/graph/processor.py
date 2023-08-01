@@ -53,7 +53,7 @@ def solve(tn):
     n = int(input())
     L = [list(map(int, input().split())) for i in range(n)]
 
-    check = []
+    check_ = []
 
     pos = [[0 for i in range(n)] for i in range(n)]
 
@@ -63,8 +63,22 @@ def solve(tn):
                 pos[i][j] = 1
                 if i == 0 or i == n -1 or j == 0 or j == n-1:
                      continue
-                check.append((i, j))
+                check_.append((i, j))
+    
+    check = []
+
+    for x, y in check_:
+        count = 0
+        for i in range(4):
+            if not possible(x, y, i):
+                count += 1
+        if count != 4:
+            check.append((x, y))
+
     cl = len(check)
+
+    if cl == 0:
+        return f'#{tn} {0}'
     
     cx, cy = check[0]
     backtracking(cx, cy, 0, 0)
