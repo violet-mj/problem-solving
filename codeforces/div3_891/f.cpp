@@ -1,4 +1,5 @@
 #include <iostream>
+#include <map>
 using namespace std;
 
 void __print(int x) {cerr << x;}
@@ -44,10 +45,77 @@ T ceil(T a, T b) {
 	return (a - 1) / b + 1;
 }
 
-int n, t;
+ll n, t, tmp, q, x, y;
+
+ll preciseSqrt(ll value) {
+	ll l = 0;
+	ll r = 2000000000;
+	while(l + 1 < r) {
+		ll mid = (l + r) >> 1;	
+
+		if(mid * mid <= value) {
+			l = mid;	
+		} else {
+			r = mid;	
+		}
+	}
+	if(l * l == value) {
+		return l;	
+	}
+	return -1;
+}
 
 void solve() {
 	cin >> n;
+	map<ll, ll> m;
+
+	for(int i = 0; i < n; i++) {
+		cin >> tmp;		
+		m[tmp]++;
+	}
+	cin >> q;
+
+	for(int i = 0; i < q; i++) {
+		cin >> x >> y;	
+		ll xy = x * x - 4 * y;
+		if(xy < 0) {
+			cout << 0 << " ";		
+			continue;
+		}
+		ll sqrtxy = preciseSqrt(xy);
+
+		if(sqrtxy == -1) {
+			cout << 0 << " ";		
+			continue;
+		}
+
+		ll x1 = (x + sqrtxy);
+		ll x2 = (x - sqrtxy);
+
+		ll res = 0;
+
+		if(x1 % 2 == 0) {
+			x1 /= 2;
+			ll mx1 = m[x1];
+		  if(x1 == x - x1) {
+			  res += ((mx1) * (m[x1] - 1) / 2);	
+		  } else {
+			  res += (mx1) * (m[x - x1]);
+		  }
+		}
+
+		if(x2 % 2 == 0) {
+			x2 /= 2;
+			ll mx2 = m[x2];
+		  if(x2 == x - x2) {
+			  res += ((mx2) * (mx2 - 1) / 2);	
+		  } else {
+			  res += (mx2) * (m[x - x2]);
+		  }
+		}
+		cout << res / 2 << " ";
+	}
+	cout << "\n";
 }
 
 int main() {

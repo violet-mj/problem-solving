@@ -1,7 +1,5 @@
 
 #include <iostream>
-#include <vector>
-#include <algorithm>
 #include <map>
 using namespace std;
 
@@ -48,21 +46,37 @@ T ceil(T a, T b) {
 	return (a - 1) / b + 1;
 }
 
-int n, t, q;
+int n, t, tmp;
 
 void solve() {
 	cin >> n;
-	map<int, int> m;
 
-	
+	int max_ = -1;
+	map<int, int> cnt;
 
-	
+	for(int i = 0; i < n; i++) {
+		cin >> tmp;
+		cnt[tmp]++;
+		max_ = max(max_, tmp);
+	}
+
+	int k = cnt[max_];
+
+	for(int i = max_-1; i >= 0; i--) {
+
+		if(cnt[i] >= k) {
+			k = cnt[i];
+		} else {
+			cout << "NO" << "\n";
+			return;
+		}
+	}
+	cout << "YES" << "\n";
 }
 
 int main() {
 	cin.tie(0);
   ios::sync_with_stdio(0);
-	// cin >> t;
-	// for(int i = 0; i < t; i++) 
-	solve();
+	cin >> t;
+	for(int i = 0; i < t; i++)  solve();
 }
