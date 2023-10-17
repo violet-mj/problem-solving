@@ -28,42 +28,31 @@ typedef vector<lint> vl;
 #define endl "\n"
 #define all(v) (v).begin(),(v).end()
 
-void solve() {
-	int n;	
-	string s;
-	cin >> n >> s;
 
-	vector<lint> values(n);
-
-	for(int i = 0; i < n; i++) {
-		values[i] = s[i] - '0';
+int log2(int n) {
+	int cnt = 0;
+	while(n % 2 == 0) {
+		cnt++;
+		n/=2;
 	}
-
-	sort(all(values));
-
-	vector<lint> exp10(14);
-	exp10[0] = 1LL;
-
-	for(int i = 1; i < 14; i++) {
-		exp10[i] = exp10[i-1] * 10LL;
-	}
-
-	lint cnt = 0LL;
-
-	do {
-		lint res = 0LL;
-		for(int i = n-1; i >= 0; i--) {
-			res += values[n-1-i] * exp10[i];
-		}
-		debug(res);
-		if((res & (res - 1)) == 0) {
-			cnt++;	
-		}
-	} while(next_permutation(all(values)));
-
-	cout << cnt << "\n";
+	return cnt;
 }
 
+void solve() {
+	int n;
+	cin >> n;
+	vector<int> visited(10001, 0);
+
+	for(int i = 1; i <= n; i++) {
+		int square = 1 << (log2(i) + 1);
+		while(visited[square - i] || square - i <= 0) {
+			square <<= 1;	
+		}
+		visited[square - i] = 1;
+		// debug(i, square - i, square);
+		cout << square - i << "\n";
+	}
+}
 
 int main() {
 	cin.tie(0);
