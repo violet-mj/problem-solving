@@ -28,33 +28,39 @@ typedef vector<lint> vl;
 #define endl "\n"
 #define all(v) (v).begin(),(v).end()
 
-
-
 void solve() {
-	int n;		
+	int n;
 	cin >> n;
-	vector<int> values(n);
-	for(int i = 0; i < n; i++) cin >> values[i];
-	int maxValue = *max_element(all(values));
 
-	bool isDecrease = true;
-	int currMin = values[0]; 
-	lint res = 0;
-	for(int i = 1; i < n; i++) {
-		if(values[i-1] == values[i]) continue;
-		if(values[i-1] < values[i])	 {
-			currMin = min(currMin, values[i]);
-			isDecrease = false;				
-		} else if(values[i-1] > values[i] && isDecrease) {
-			currMin = min(currMin, values[i]);
-		} else {
-			res += maxValue - currMin;
-			currMin = values[i+1];
-			isDecrease = true;
+	vector<int> w(n);
+	for(int i = 0; i < n; i++) cin >> w[i];
+
+	int left = w[0];
+	int right = w[1];
+
+	for(int i = 2; i < n; i++) {
+		if(left == right) {
+			left += w[i];
+		}	else {
+			if(left < right) {
+				left += w[i];
+			} else {
+				right += w[i];
+			}
 		}
 	}
 
-	cout << res + maxValue - currMin << "\n";
+	int diff = abs(left - right);
+
+	vector<int> pre {100,50,20,10,5,2,1};
+	int res = 0;
+	for(auto p: pre) {
+		int tmp = diff / p;
+		res += tmp;
+		diff -= tmp * p;
+	}
+
+	cout << res << "\n";
 }
 
 int main() {
