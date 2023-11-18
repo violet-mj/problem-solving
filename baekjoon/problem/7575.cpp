@@ -31,58 +31,58 @@ typedef vector<lint> vl;
 
 
 void solve() {
-	int n, k, size;		
+	short n, k, size;		
 	cin >> n >> k;
-	vector<vector<int>> values(n, vector<int>());
-	vector<vector<bool>> check;
-	int initSize;
+	vector<vector<short>> values(n);
+	short initSize;
 	
-	for(int i = 0; i < n; i++) {
+	for(short i = 0; i < n; i++) {
 		cin >> size;
-		if(i == 0) {
-			check.resize(n, vector<bool>(size - k + 1, false));
-			initSize = size;
-		}
 		values[i].resize(size);
-		for(int j = 0; j < size; j++) {
+		for(short j = 0; j < size; j++) {
 			cin >> values[i][j];
 		}
 	}
 
-	for(int i = 0; i < initSize; i++)  {
-		check[0][i]	= true;
-	}
+	sort(all(values), [&](vector<short>& v1, vector<short>& v2) {
+				return v1.size() < v2.size();
+	});
 
-	vector<vector<int>> patterns(initSize - k + 1, vector<int>(k, 0));
+	initSize = values[0].size();
 
-	for(int i = 0; i < initSize - k + 1; i++) {
-		for(int j = 0; j < k; j++)		 {
+	vector<vector<short>> patterns(initSize - k + 1, vector<short>(k, 0));
+
+	for(short i = 0; i < initSize - k + 1; i++) {
+		for(short j = 0; j < k; j++) {
 			patterns[i][j] = values[0][i + j];
 		}
 	}
 
-	debug(patterns);
-	return;
+	auto kmp = [&](short nthProgram, vector<short>& pattern, vector<short>& fail) {
 
-	auto kmp = [&](int nthProgram, vector<int>& pattern, vector<int>& fail) {
+		vector<short>& target = values[nthProgram];
+		short ts = target.size();
+		short ps = pattern.size();
 
-		vector<int> target = values[nthProgram];
-		int ts = target.size();
-
-		for(int i = 1, j = 0; i < ts; i++) {
-			while(j != 0 && target[i] != target[j])	j = fail[j - 1];
-
+		for(short i = 0, j = 0; i < ts; i++) {
+			while(j != 0 && target[i] != pattern[j])	j = fail[j - 1];
+			if(target[i] == pattern[j]) {
+				if(j == ps - 1) {
+					return true;	
+				}
+				j++;
+			}
 		}
 
-		return true;
+		return false;
 	};
 
-	auto getFail = [&](vector<int>& pattern) {
+	auto getFail = [&](vector<short>& pattern) {
 		int ps = pattern.size();
 
-		vector<int> fail(ps, 0);
+		vector<short> fail(ps, 0);
 
-		for(int i = 1, j = 0; i < ps; i++) {
+		for(short i = 1, j = 0; i < ps; i++) {
 			while(j != 0 && pattern[i] != pattern[j]) j = fail[j - 1];
 			if(pattern[i] == pattern[j]) fail[i] = j + 1;
 		}
@@ -90,14 +90,30 @@ void solve() {
 		return fail;
 	};
 
-	for(int i = 0; i < initSize - k + 1; i++) {
-		vector<int> pattern = patterns[i];
-		vector<int> fail = getFail(pattern);
-		for(int j = 1; j < n; j++) {
-			bool isExist = kmp(j, pattern, fail);
-			check[j][i] = isExist ? true : false;
+	bool flag;
+
+	for(short i = 0; i < initSize - k + 1; i++) {
+		vector<short>& pattern = patterns[i];
+		vector<short> pattern1 = patterns[i];
+		reverse(all(pattern1));
+		vector<short> fail = getFail(pattern);
+		vector<short> fail1 = getFail(pattern1);
+		flag = true;
+		for(short j = 1; j < n; j++) {
+			if(kmp(j, pattern, fail) || kmp(j, pattern1, fail1)) {
+				continue;	
+			} else {
+				flag = false;	
+				break;
+			}
+		}
+		if(flag) {
+			cout << "YES\n";
+			return;
 		}
 	}
+
+	cout << "NO\n";
 }
 
 int main() {
