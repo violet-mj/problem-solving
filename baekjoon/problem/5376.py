@@ -6,60 +6,53 @@ def gcd(a, b):
         a, b = b, a % b
     return a
 
-def addDividing(a1, a2, b1, b2):
-    gg = gcd(a2, b2)
-    lg = a2 * b2 // gg
+def fractionSimplify(nume, deno):
+    g = gcd(nume, deno)
+    nume //= g
+    deno //= g
+    return (nume, deno)
 
-    am = lg // a2
-    bm = lg // b2
+def fractionAdd(fNume, fDeno, rNume, rDeno):
+    gDeno = gcd(fDeno, rDeno)
+    cDeno = fDeno * rDeno // gDeno
 
-    a1 *= am
-    b1 *= bm
+    fNumeMul = cDeno // fDeno
+    rNumeMul = cDeno // rDeno
 
-    up = a1 + b1
-    gud = gcd(up, lg)
+    fNume *= fNumeMul
+    rNume *= rNumeMul
 
-    return (up // gud, lg // gud)
+    cNume = fNume + rNume
+
+    return fractionSimplify(cNume, cDeno)
     
 def solve():
     s = input()
     ps = s.split(".")[1]
-    flag = 0
-
-    curr = 0
-    currCheck = 1
-    check = 1
-    
-    it = 0
-
-    itr = 1
-    
+    isCircular = 0
+    t = 0; m = 1; v = 0; c = 1
     for i in ps:
-        if i == "(": flag ^= 1; continue
+        if i == "(": isCircular ^= 1; continue
         if i == ")": break
 
-        if flag:
-            check *= 10
-            it *= 10 
-            it += int(i)
+        if isCircular:
+            c *= 10
+            v *= 10 
+            v += int(i)
         else:
-            currCheck *= 10
-            curr *= 10
-            curr += int(i)
+            m *= 10
+            t *= 10
+            t += int(i)
 
-    if it == 0:
-        gg = gcd(curr, currCheck)
-        curr //= gg
-        currCheck //= gg
-        return f"{curr}/{currCheck}"
+
+    if v == 0:
+        nume, deno = fractionSimplify(t, m)
+        return f"{nume}/{deno}"
     else:
-        it *= check
-        check *= (check - 1) 
-        check *= currCheck
-
-        up, lg = addDividing(curr, currCheck, it, check)
-
-        return f"{up}/{lg}"
+        v = v * c
+        c = m * (c - 1) * c
+        nume, deno = fractionAdd(t, m, v, c)
+        return f"{nume}/{deno}"
 
 if __name__ == "__main__":
     for i in range(int(input())):
